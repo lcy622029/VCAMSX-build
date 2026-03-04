@@ -19,7 +19,7 @@ jobs:
       - name: Download missing gradle-wrapper.jar
         run: |
           mkdir -p gradle/wrapper
-          wget -O gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/7.5/gradle-wrapper-7.5.jar
+          wget -O gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
 
       - name: Build Release APK
         run: ./gradlew assembleRelease
