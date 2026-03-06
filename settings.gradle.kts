@@ -13,6 +13,7 @@ dependencyResolutionManagement {
         gradlePluginPortal()
         mavenCentral()
         maven("https://api.xposed.info/")
+        maven("https://jitpack.io")
         maven {
             url = uri("https://maven.pkg.github.com/GCX-HCI/tray")
             credentials {
