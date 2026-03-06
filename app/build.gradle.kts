@@ -51,6 +51,7 @@ android {
 dependencies {
 implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
 implementation("tv.danmaku.ijk.media:ijkplayer-exo:0.8.8")
+implementation("com.contrarywind:Android-PickerView:4.1.9")
 // Core library for Kotlin extensions and utilities
     implementation("androidx.core:core-ktx:1.9.0")
 // Lifecycle components for using ViewModel and LiveData in a Kotlin-friendly way
