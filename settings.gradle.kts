@@ -5,6 +5,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -12,10 +13,15 @@ dependencyResolutionManagement {
         gradlePluginPortal()
         mavenCentral()
         maven("https://api.xposed.info/")
-        maven ("https://maven.pkg.github.com/GCX-HCI/tray" )
+        maven {
+            url = uri("https://maven.pkg.github.com/GCX-HCI/tray")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
 
 rootProject.name = "VCAMSX"
 include(":app")
- 
