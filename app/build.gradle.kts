@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -10,7 +11,6 @@ android {
     defaultConfig {
         applicationId = "com.wangyiheng.vcamsx"
         minSdk = 24
-        //noinspection EditedTargetSdkVersion
         targetSdk = 34
         versionCode = 13
         versionName = "1.1.2"
@@ -19,15 +19,39 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // 关键：编译所需架构
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
+    }
+
+    // 关键：开启 native 编译
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("debug")
+
+            // Release 也编译 so 库
+            externalNativeBuild {
+                cmake {
+                    arguments += listOf("-DCMAKE_BUILD_TYPE=Release")
+                }
+            }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -39,7 +63,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -49,75 +73,32 @@ android {
 }
 
 dependencies {
-implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
-implementation("tv.danmaku.ijk.media:ijkplayer-exo:0.8.8")
-implementation("com.contrarywind:Android-PickerView:4.1.9")
-// Core library for Kotlin extensions and utilities
-    implementation("androidx.core:core-ktx:1.9.0")
-// Lifecycle components for using ViewModel and LiveData in a Kotlin-friendly way
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-
-// Compose support for Activities
-    implementation("androidx.activity:activity-compose:1.8.0")
-
-// Bill of Materials (BOM) for all Compose libraries, ensures compatible versions
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-// Compose UI framework
-    implementation("androidx.compose.ui:ui")
-
-// Compose library for graphics
-    implementation("androidx.compose.ui:ui-graphics")
-
-// Tooling for UI preview in Compose
-    implementation("androidx.compose.ui:ui-tooling-preview")
-
-// Material3 design components for Compose
-    implementation("androidx.compose.material3:material3")
-
-// Media3 ExoPlayer for handling media playback
-    implementation("androidx.media3:media3-exoplayer:1.2.0")
-    implementation("androidx.media3:media3-ui:1.2.0")
-    implementation("androidx.compose.ui:ui-text-android:1.5.4")
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-// JUnit for unit testing
-    testImplementation("junit:junit:4.13.2")
-
-// AndroidX Test library for Android-specific JUnit4 helpers
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-
-// Espresso for UI testing
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-// BOM for Compose in android tests
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-
-// Compose testing library for JUnit4
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-
-// Tooling for debugging Compose UIs
-    debugImplementation("androidx.compose.ui:ui-tooling")
-
-// Manifest for testing Compose UIs
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-// Koin core module for Dependency Injection
-    implementation ("io.insert-koin:koin-core:3.2.2")
-
-// Koin module for Android
-    implementation ("io.insert-koin:koin-android:3.2.2")
-
-// Koin module for AndroidX Compose
-    implementation ("io.insert-koin:koin-androidx-compose:3.2.2")
-
-// Xposed API for advanced customization and hooking into Android apps (compile only)
-    compileOnly("de.robv.android.xposed:api:82")
-
-
-    implementation ("com.crossbowffs.remotepreferences:remotepreferences:0.8")
-
-    implementation ("com.google.code.gson:gson:2.8.8")
-
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.org.javawebservice.jaxws.api)
+    implementation(libs.androidx.camera.view)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    api(libs.dev.rikka.shizuku.api)
+    api(libs.dev.rikka.shizuku.provider)
+    implementation(libs.org.jetbrains.kotlinx.kotlinx.serialization.json)
+    implementation(libs.com.squareup.okhttp3.okhttp)
+    implementation(libs.com.google.code.gson.gson)
+    implementation(libs.camera.core)
+    implementation(libs.camera.view)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.libs.ffmpeg.kit.full)
 }
